@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Corporate Chat</title>
+  <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+  <script>
+    const socket = io('http://localhost:8080');
+
+    socket.on('message', (message) => {
+      const messageContainer = document.getElementById('message-container');
+      messageContainer.innerHTML += `<p>${message}</p>`;
+    });
+
+    function sendMessage() {
+      const messageInput = document.getElementById('message-input');
+      const message = messageInput.value;
+
+      socket.emit('message', message);
+      messageInput.value = '';
+    }
+
+    function formHandler() {
+      event.preventDefault();
+      sendMessage();
+    }
+
+    function adminLogin() {
+      document.querySelector('.login').style.display = 'none';
+      document.querySelector('.authAdmin').style.display = 'block';
+      document.querySelector('.authUser').style.display = 'none';
+    }
+
+    function userLogin() {
+      document.querySelector('.login').style.display = 'none';
+      document.querySelector('.authAdmin').style.display = 'none';
+      document.querySelector('.authUser').style.display = 'block';
+    }
+
+    function logout() {
+      document.querySelector('.login').style.display = 'block';
+      document.querySelector('.authAdmin').style.display = 'none';
+      document.querySelector('.authUser').style.display = 'none';
+    }
+  </script>
+</head>
+<body>
+  <h1>Корпоративний чат</h1>
+  
+  <div class="login">
+    <button onclick="userLogin()">Увійти як користувач</button>
+    <button onclick="adminLogin()">Увійти як керівник підрозділу</button>
+  </div>
+  
+  <div style="color: red" id="message-container"></div>
+
+  <div style="display: none;" class="authAdmin">
+    <p>Для повідомлення про приплод тварин введіть текст "приплод" та натисніть кнопку "Відправити"</p>
+  
+    <form onsubmit="formHandler()">
+      <input type="text" id="message-input">
+      <button onclick="sendMessage()">Відправити</button>
+    </form>
+
+    <button style="margin-top: 10px;" onclick="logout()">Вийти</button>
+  </div>
+
+  <div style="display: none;" class="authUser">
+    <p>Вам, як користувачу, будуть надходити повідомлення про приплод</p>
+
+    <button onclick="logout()">Вийти</button>
+  </div>
+</body>
+</html>
+
+
